@@ -1,0 +1,56 @@
+유저table
+userid / accountid / puuid / name / summonerLevel
+
+gametable
+gameid / 
+
+
+grant all privileges on *.* to 'root'@'%' identified by 'root';
+
+docker rmi $(docker images -q)
+docker rm $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+
+할일 
+전적
+
+깃허브 등록하는 방법
+
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/parkjungkwan/aiacademy-java-algorithm.git
+git push -u origin main
+
+git config --global user.email "...."
+git config --global user.name "...."
+
+git add .
+git commit -m "first commit"
+git push -u origin main
+
+할 일  v
+챗 봇
+상호 모델
+
+[{'index':1,'context':'test1','done':0},{'index':2,'context':'test2','done':0},{'index':3,'context':'test3','done':1}]
+
+
+There are many models that can be used for video classification depending on the specific requirements of the project. Here are a few popular models for video classification:
+
+Two-Stream Convolutional Neural Networks: This model uses two separate streams of input, one for spatial information and one for motion information, and combines them to make predictions.
+
+3D Convolutional Neural Networks: This model extends traditional CNNs to handle 3D inputs (i.e., video) by applying convolutions across both space and time dimensions.
+
+I3D (Inflated 3D ConvNet): This is an extension of 2D CNN architectures that pre-trains a 3D CNN on large-scale video datasets and then fine-tunes it on the target classification task.
+
+C3D (Convolutional 3D): This model applies 3D convolutional filters directly to the video frames and has shown good performance in sports video classification.
+
+TSN (Temporal Segment Networks): This model segments the input video into multiple segments and computes features for each segment separately, and then aggregates them to make predictions.
+
+The choice of model depends on various factors such as the size of the dataset, the complexity of the classification task, the available computing resources, and the desired accuracy. It is recommended to experiment with different models and find the one that works best for the specific project.
+
+
+
+Regenerate response

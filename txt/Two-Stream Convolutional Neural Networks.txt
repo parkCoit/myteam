@@ -1,0 +1,79 @@
+Write code with Two-Stream Convolutional Neural Networks for trainning video classify AI model
+
+Sure, here's an example of training a Two-Stream Convolutional Neural Network for video classification using PyTorch:
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+
+from video_dataset import VideoDataset
+from two_stream_cnn import TwoStreamCNN
+
+# Define hyperparameters
+batch_size = 16
+num_epochs = 10
+learning_rate = 0.001
+
+# Define data transforms
+data_transforms = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
+# Load the dataset
+train_dataset = VideoDataset('path/to/train/videos', 'path/to/train/labels.csv', transform=data_transforms)
+val_dataset = VideoDataset('path/to/val/videos', 'path/to/val/labels.csv', transform=data_transforms)
+
+# Create data loaders
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=batch_size)
+
+# Create the model
+model = TwoStreamCNN(num_classes=2)
+
+# Define the loss function and optimizer
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+# Train the model
+for epoch in range(num_epochs):
+    print(f'Epoch {epoch+1}/{num_epochs}')
+    print('-' * 10)
+    for phase in ['train', 'val']:
+        if phase == 'train':
+            model.train()
+            data_loader = train_loader
+        else:
+            model.eval()
+            data_loader = val_loader
+
+        running_loss = 0.0
+        running_corrects = 0
+
+        for inputs, labels in data_loader:
+            # Zero the gradients
+            optimizer.zero_grad()
+
+            # Forward pass
+            with torch.set_grad_enabled(phase == 'train'):
+                outputs = model(inputs)
+                _, preds = torch.max(outputs, 1)
+                loss = criterion(outputs, labels)
+
+                # Backward pass and optimization
+                if phase == 'train':
+                    loss.backward()
+                    optimizer.step()
+
+            # Calculate statistics
+            running_loss += loss.item() * inputs.size(0)
+            running_corrects += torch.sum(preds == labels.data)
+
+        # Calculate epoch statistics
+        epoch_loss = running_loss / len(data_loader.dataset)
+        epoch_acc = running_corrects.double() / len(data_loader.dataset)
+
+        print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')

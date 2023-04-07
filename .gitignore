@@ -1,0 +1,4 @@
+data/
+model_save/
+*.h5
+*.pth

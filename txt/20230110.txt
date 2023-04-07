@@ -1,0 +1,65 @@
+create table users(
+    user_email varchar(20) primary key,
+    id varchar(20),
+    username varchar(20),
+    password varchar(20),
+    rank integer(20),
+    point integer(20)
+)charset = utf8;
+
+insert into users(user_email, id, username, password, rank,
+                point)
+values ('hong@test.com', '1', '홍길동', '1111', '1',
+                '100');
+
+insert into users(user_email, id, username, password, rank,
+                point)
+values ('you@test.com', '1', '유관순', '1111', '2',
+                '100');
+
+select * from users;
+
+
+
+
+
+create table users(
+    user_id binary(16) primary key,
+    user_email varchar(20),
+    id varchar(20),
+    username varchar(20),
+    password varchar(20),
+    rank integer(20),
+    point integer(20),
+    create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+)charset = utf8;
+
+create table articles(
+    article_id int primary key AUTO_INCREMENT,
+    title varchar(20),
+    content varchar(100),
+    create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    user_id binary(16), foreign key (user_id) REFERENCES users (user_id) on update cascade on delete cascade
+)charset = utf8;
+
+insert into users(user_id, user_email, id, username, password, rank, point)
+values (UNHEX(REPLACE(UUID(),'-','')),'hong@test.com', 'hong', '홍길동', '1111', '1', '100');
+
+insert into users(user_id, user_email, id, username, password, rank, point)
+values (UNHEX(REPLACE(UUID(),'-','')),'park@test.com', 'park', '박재범', '1111', '2', '100');
+
+insert into articles(title, content)
+values ('number1', 'test1');
+
+insert into articles(title, content)
+values ('number2', 'test2');
+
+select * from users;
+
+select * from articles;
+
+
+
+grant all privileges on *.* to 'root'@'%' identified by 'root';

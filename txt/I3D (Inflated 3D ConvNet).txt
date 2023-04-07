@@ -1,0 +1,56 @@
+I3D (Inflated 3D ConvNet)
+
+import numpy as np
+from keras.layers import Dense, Input, Flatten
+from keras.models import Model
+from keras.optimizers import SGD
+from keras.callbacks import EarlyStopping
+from keras.applications.i3d import InceptionV3, preprocess_input
+from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+
+# Define the number of classes
+num_classes = 10
+
+# Define the input shape of the video frames
+input_shape = (None, 224, 224, 3)
+
+# Define the input layer for the I3D model
+input_layer = Input(shape=input_shape)
+
+# Load the I3D model pre-trained on Kinetics dataset
+i3d = InceptionV3(input_tensor=input_layer, include_top=False, weights='rgb_imagenet_kinetics')
+
+# Freeze the convolutional layers of the pre-trained model
+for layer in i3d.layers:
+    if 'conv3d' in layer.name:
+        layer.trainable = False
+
+# Add a custom top layer for classification
+x = i3d.output
+x = Flatten()(x)
+x = Dense(256, activation='relu')(x)
+x = Dense(num_classes, activation='softmax')(x)
+
+# Compile the model
+model = Model(inputs=input_layer, outputs=x)
+optimizer = SGD(lr=0.001, momentum=0.9)
+model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+
+# Define data generators for training and validation
+train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
+val_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
+
+train_generator = train_datagen.flow_from_directory(
+        'train_dir',
+        target_size=(224, 224),
+        batch_size=16,
+        class_mode='categorical')
+
+val_generator = val_datagen.flow_from_directory(
+        'val_dir',
+        target_size=(224, 224),
+        batch_size=16,
+        class_mode='categorical')
+
+# Train the model
+model.fit(train_generator, epochs=50, validation_data=val_generator, callbacks=[EarlyStopping(patience=3)])
